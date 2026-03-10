@@ -1,0 +1,10 @@
+/* App specific styles if any */
+.app {
+  overflow-x: hidden;
+}
+
+/* Custom selection color */
+::selection {
+  background: rgba(99, 102, 241, 0.3);
+  color: white;
+}

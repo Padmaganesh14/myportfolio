@@ -1,0 +1,96 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary: #6366f1;
+  --primary-hover: #4f46e5;
+  --secondary: #ec4899;
+  --bg-dark: #0f172a;
+  --bg-darker: #020617;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --glass: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --max-width: 1200px;
+}
+
+@layer base {
+  body {
+    @apply bg-darker text-main font-sans overflow-x-hidden;
+    line-height: 1.6;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display font-bold;
+    line-height: 1.2;
+  }
+}
+
+@layer components {
+  .glass {
+    @apply bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl;
+  }
+
+  .btn {
+    @apply px-8 py-3 rounded-lg font-semibold transition-all duration-300 inline-block text-center cursor-pointer;
+  }
+
+  .btn-primary {
+    @apply bg-gradient-to-r from-primary to-secondary text-white hover:shadow-[0_4px_20px_#6366f166] hover:-translate-y-0.5;
+  }
+
+  .btn-outline {
+    @apply bg-transparent border border-white/10 text-white hover:bg-white/5 hover:border-primary;
+  }
+
+  .section-title {
+    @apply text-4xl md:text-5xl mb-12 text-center bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent;
+    text-shadow: 0 0 30px rgba(99, 102, 241, 0.3);
+  }
+
+  .text-glow {
+    text-shadow: 0 0 20px rgba(99, 102, 241, 0.5), 0 0 40px rgba(236, 72, 153, 0.3);
+  }
+
+  .hover-glow {
+    @apply transition-all duration-300;
+  }
+
+  .hover-glow:hover {
+    text-shadow: 0 0 25px rgba(99, 102, 241, 0.8), 0 0 50px rgba(236, 72, 153, 0.5);
+    filter: brightness(1.2);
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-darker;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-white/10 rounded-full hover:bg-primary;
+}
+
+/* Background Blobs */
+.blob {
+  @apply absolute w-[500px] h-[500px] rounded-full blur-[100px] -z-10 pointer-events-none;
+}
+
+.blob-1 {
+  @apply top-[-100px] right-[-100px] bg-primary/15;
+}
+
+.blob-2 {
+  @apply bottom-[-200px] left-[-200px] bg-secondary/10;
+}
