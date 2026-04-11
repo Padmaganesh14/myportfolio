@@ -2,7 +2,7 @@ import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import emailjs from '@emailjs/browser';
 import { profileData } from '../data';
-import { Mail, Phone, MapPin, Send, Github, Linkedin, CheckCircle, XCircle, Loader } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, Github, Linkedin, CheckCircle, XCircle, Loader, AlertTriangle } from 'lucide-react';
 
 // ─── EmailJS Config ──────────────────────────────────────────────────────────
 // 1. Go to https://www.emailjs.com and create a free account
@@ -41,9 +41,17 @@ export default function Contact() {
             setTimeout(() => setStatus('idle'), 5000);
         } catch (err) {
             console.error('EmailJS error:', err);
-            setErrorMsg(err?.text || 'Something went wrong. Please try again.');
+            // Detect broken OAuth / Gmail grant errors
+            const isAuthError = err?.text?.toLowerCase().includes('invalid grant')
+                || err?.text?.toLowerCase().includes('gmail')
+                || err?.status === 412;
+            setErrorMsg(
+                isAuthError
+                    ? 'EMAIL_API_DOWN'
+                    : (err?.text || 'Something went wrong. Please try again.')
+            );
             setStatus('error');
-            setTimeout(() => setStatus('idle'), 5000);
+            setTimeout(() => setStatus('idle'), 8000);
         }
     };
 
@@ -149,10 +157,29 @@ export default function Contact() {
                                     initial={{ opacity: 0, y: -16, scale: 0.95 }}
                                     animate={{ opacity: 1, y: 0, scale: 1 }}
                                     exit={{ opacity: 0, y: -16, scale: 0.95 }}
-                                    className="absolute top-6 left-6 right-6 flex items-center gap-3 bg-red-500/20 border border-red-500/40 text-red-400 rounded-xl px-5 py-4 z-10"
+                                    className="absolute top-4 left-4 right-4 z-10"
                                 >
-                                    <XCircle size={20} className="shrink-0" />
-                                    <span className="font-medium">{errorMsg || 'Failed to send. Please try again.'}</span>
+                                    {errorMsg === 'EMAIL_API_DOWN' ? (
+                                        <div className="flex flex-col gap-3 bg-amber-500/15 border border-amber-500/40 text-amber-300 rounded-xl px-5 py-4">
+                                            <div className="flex items-center gap-2 font-semibold">
+                                                <AlertTriangle size={18} className="shrink-0" />
+                                                Email service temporarily unavailable
+                                            </div>
+                                            <p className="text-sm text-amber-300/80">Please email me directly — I'll reply promptly!</p>
+                                            <a
+                                                href={`mailto:${profileData.email}?subject=Portfolio%20Inquiry`}
+                                                className="inline-flex items-center gap-2 self-start px-4 py-2 rounded-lg bg-amber-400/20 hover:bg-amber-400/30 border border-amber-400/40 text-amber-200 font-semibold text-sm transition-all"
+                                            >
+                                                <Mail size={15} />
+                                                {profileData.email}
+                                            </a>
+                                        </div>
+                                    ) : (
+                                        <div className="flex items-center gap-3 bg-red-500/20 border border-red-500/40 text-red-400 rounded-xl px-5 py-4">
+                                            <XCircle size={20} className="shrink-0" />
+                                            <span className="font-medium">{errorMsg || 'Failed to send. Please try again.'}</span>
+                                        </div>
+                                    )}
                                 </motion.div>
                             )}
                         </AnimatePresence>
@@ -210,6 +237,18 @@ export default function Contact() {
                                 )}
                             </button>
                         </form>
+
+                        {/* Permanent direct-email fallback */}
+                        <div className="mt-6 pt-6 border-t border-white/8 text-center">
+                            <p className="text-xs text-muted mb-3 uppercase tracking-widest font-medium">Or reach me directly</p>
+                            <a
+                                href={`mailto:${profileData.email}?subject=Portfolio%20Inquiry`}
+                                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/10 bg-white/4 hover:border-primary/40 hover:bg-primary/8 text-muted hover:text-white transition-all duration-300 text-sm font-semibold"
+                            >
+                                <Mail size={15} />
+                                {profileData.email}
+                            </a>
+                        </div>
                     </motion.div>
                 </div>
 
